@@ -411,6 +411,15 @@ class QuadrotorEnvMulti(gym.Env):
         return obs
 
     def step(self, actions):
+
+        # self.k_act_arr += 1
+        # self.act_arr_0[self.k_act_arr,:] = actions[0,:]
+        #
+        # if self.k_act_arr%1000 == 0:
+        #     with open('/home/saz/GitHub/quad-swarm-rl/actions_0.npy', 'wb') as f:
+        #         np.save(f, self.act_arr_0)
+        #     np.savetxt('/home/saz/GitHub/quad-swarm-rl/actions_0.csv', self.act_arr_0[self.k_act_arr,:], delimiter=",")
+
         obs, rewards, dones, infos = [], [], [], []
 
         for i, a in enumerate(actions):
