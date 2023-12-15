@@ -278,6 +278,7 @@ class QuadrotorSingle:
     def make_observation_space(self):
         room_range = self.room_box[1] - self.room_box[0]
         self.obs_space_low_high = {
+            "rtxyz" : [-room_range, room_range],
             "xyz": [-room_range, room_range],
             "xyzr": [-room_range, room_range],
             "vxyz": [-self.dynamics.vxyz_max * np.ones(3), self.dynamics.vxyz_max * np.ones(3)],
@@ -311,6 +312,8 @@ class QuadrotorSingle:
         obs_comps = self.obs_repr.split("_")
         if self.neighbor_obs_type == 'pos_vel' and self.num_use_neighbor_obs > 0:
             obs_comps = obs_comps + (['rxyz'] + ['rvxyz']) * self.num_use_neighbor_obs
+        elif self.neighbor_obs_type == 'pos_vel_tpos' and self.num_use_neighbor_obs > 0:
+            obs_comps = obs_comps + (['rxyz'] + ['rvxyz'] + ['rtxyz']) * self.num_use_neighbor_obs
 
         if self.use_obstacles:
             obs_comps = obs_comps + ["octmap"]

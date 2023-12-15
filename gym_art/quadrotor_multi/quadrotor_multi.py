@@ -41,6 +41,7 @@ class QuadrotorEnvMulti(gym.Env):
                  ):
         super().__init__()
 
+        self.neighbor_obs_type = neighbor_obs_type
         # Predefined Parameters
         self.num_agents = num_agents
         obs_self_size = QUADS_OBS_REPR[obs_repr]
@@ -109,6 +110,13 @@ class QuadrotorEnvMulti(gym.Env):
         neighbor_obs_size = QUADS_NEIGHBOR_OBS_TYPE[neighbor_obs_type]
 
         self.clip_neighbor_space_length = self.num_use_neighbor_obs * neighbor_obs_size
+        # print("############################################################################")
+        # print("############################################################################")
+        # print("############################################################################")
+        # print("############################################################################")
+        # print(self.observation_space.low[
+        #                                    obs_self_size:obs_self_size + self.clip_neighbor_space_length])
+
         self.clip_neighbor_space_min_box = self.observation_space.low[
                                            obs_self_size:obs_self_size + self.clip_neighbor_space_length]
         self.clip_neighbor_space_max_box = self.observation_space.high[
@@ -227,7 +235,24 @@ class QuadrotorEnvMulti(gym.Env):
     def get_obs_neighbor_rel(self, env_id, closest_drones):
         i = env_id
         pos_neighbors_rel, vel_neighbors_rel = self.get_rel_pos_vel_item(env_id=i, indices=closest_drones[i])
-        obs_neighbor_rel = np.concatenate((pos_neighbors_rel, vel_neighbors_rel), axis=1)
+
+        obs_neighbor_rel = []
+
+        # print("###################################################################################################")
+        # print("###################################################################################################")
+        # print("###################################################################################################")
+        # print("###################################################################################################")
+        # print("###################################################################################################")
+        # print(self.obs_repr)
+        if self.neighbor_obs_type == 'pos_vel_tpos':
+            cur_pos = self.pos[i]
+            targ_pos_neighbor = np.stack([self.envs[j].goal for j in closest_drones[i]])
+            rel_targ_pos = targ_pos_neighbor - cur_pos
+
+            obs_neighbor_rel = np.concatenate((pos_neighbors_rel, vel_neighbors_rel, rel_targ_pos), axis=1)
+        else:
+            obs_neighbor_rel = np.concatenate((pos_neighbors_rel, vel_neighbors_rel), axis=1)
+
         return obs_neighbor_rel
 
     def extend_obs_space(self, obs, closest_drones):
@@ -238,6 +263,15 @@ class QuadrotorEnvMulti(gym.Env):
         obs_neighbors = np.stack(obs_neighbors)
 
         # clip observation space of neighborhoods
+        # print("###################################################################################################")
+        # print("###################################################################################################")
+        # print("###################################################################################################")
+        # print("###################################################################################################")
+        # print("###################################################################################################")
+        # print(self.clip_neighbor_space_min_box)
+        # print(self.clip_neighbor_space_max_box)
+        # print(obs_neighbors)
+
         obs_neighbors = np.clip(
             obs_neighbors, a_min=self.clip_neighbor_space_min_box, a_max=self.clip_neighbor_space_max_box,
         )

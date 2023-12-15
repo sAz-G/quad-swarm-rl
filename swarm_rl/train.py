@@ -14,7 +14,6 @@ from swarm_rl.env_wrappers.quadrotor_params import add_quadrotors_env_args, quad
 from swarm_rl.models.quad_multi_model import register_models
 
 def register_swarm_components():
-    
     register_env("quadrotor_multi", make_quadrotor_env)
     register_models()
 
