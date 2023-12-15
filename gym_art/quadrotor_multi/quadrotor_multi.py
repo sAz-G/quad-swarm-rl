@@ -276,6 +276,7 @@ class QuadrotorEnvMulti(gym.Env):
     def add_neighborhood_obs(self, obs):
         indices = self.neighborhood_indices()
         obs_ext = self.extend_obs_space(obs, closest_drones=indices)
+        #obs_ext = [np.concatenate((obs_ext[k], [5,6,7] ) ) for k in range(8)]
         return obs_ext
 
     def can_drones_fly(self):

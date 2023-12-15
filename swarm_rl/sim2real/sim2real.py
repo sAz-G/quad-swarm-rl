@@ -45,6 +45,8 @@ def parse_args():
 
 
 def torch_to_c_model(args):
+    #print(args.torch_model_dir)
+    #print(type(args))
     model_dir = Path(args.torch_model_dir)
     model = load_sf_model(model_dir, args.model_type)
 
@@ -87,7 +89,7 @@ def load_sf_model(model_dir: Path, model_type: str):
     # spawn a dummy env, so we can get the obs and action space info
     env = make_quadrotor_env_multi(args)
     model = create_actor_critic(args, env.observation_space, env.action_space)
-    model_path = list(model_dir.glob('*.pth'))[0]
+    model_path = list(model_dir.joinpath('checkpoint_p0').glob('*.pth'))[0]
     model.load_state_dict(torch.load(model_path)['model'])
 
     return model
@@ -675,14 +677,14 @@ def generate_c_model(model: nn.Module, output_path: str, output_folder: str, tes
 
 if __name__ == '__main__':
     # example use case
-    # cfg = AttrDict({
-    #     'torch_model_dir': 'swarm_rl/sim2real/torch_models/single',
-    #     'output_dir': 'swarm_rl/sim2real/c_models',
-    #     'output_model_name': 'model.c',
-    #     'testing': True,
-    #     'model_type': 'single',
-    # })
-    # torch_to_c_model(cfg)
+    cfg = AttrDict({
+        'torch_model_dir': '/home/saz/Desktop/qsrl_test/train_dir/mean_embed_16_8_RELU',
+        'output_dir': 'swarm_rl/sim2real/c_models',
+        'output_model_name': 'model.c',
+        'testing': True,
+        'model_type': 'single',
+    })
+    torch_to_c_model(cfg)
 
-    cfg = parse_args()
-    torch_to_c_model(args=cfg)
+    #cfg = parse_args()
+    #torch_to_c_model(args=cfg)

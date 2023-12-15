@@ -57,6 +57,7 @@ class CornerCamera(object):
         self.center = np.array([0., 0., 2.])
         self.corner_index = corner_index
         self.room_dims = room_dims
+        self.room_dims = room_dims
         if corner_index == 0:
             self.center = np.array([-self.room_dims[0] / 2, -self.room_dims[1] / 2, self.room_dims[2]])
         elif corner_index == 1:

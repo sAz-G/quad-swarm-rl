@@ -331,6 +331,12 @@ class QuadMultiEncoder(Encoder):
         self.encoder_out_size = 2 * cfg.rnn_size
 
     def forward(self, obs_dict):
+        print("#################################################################")
+        print("#################################################################")
+        print("#################################################################")
+        print("#################################################################")
+        print("#################################################################")
+        print(obs_dict)
         obs = obs_dict['obs']
         obs_self = obs[:, :self.self_obs_dim]
         self_embed = self.self_encoder(obs_self)
