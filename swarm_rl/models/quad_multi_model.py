@@ -351,7 +351,7 @@ class QuadMultiEncoder(Encoder):
         # here
         self.feed_forward = nn.Sequential(
             fc_layer(total_encoder_out_size, 2 * cfg.rnn_size),
-            nn.ReLU(),
+            nn.Tanh(),
         )
 
         self.encoder_out_size = 2 * cfg.rnn_size

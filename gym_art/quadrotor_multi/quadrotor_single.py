@@ -19,6 +19,7 @@ References:
 """
 import copy
 
+import numpy as np
 from gymnasium.utils import seeding
 
 import gym_art.quadrotor_multi.get_state as get_state
@@ -102,7 +103,7 @@ class QuadrotorSingle:
                  sim_steps=2, obs_repr="xyz_vxyz_R_omega", ep_time=7, room_dims=(10.0, 10.0, 10.0),
                  init_random_state=False, sense_noise=None, verbose=False, gravity=GRAV,
                  t2w_std=0.005, t2t_std=0.0005, excite=False, dynamics_simplification=False, use_numba=False,
-                 neighbor_obs_type='none', num_agents=1, num_use_neighbor_obs=0, use_obstacles=False):
+                 neighbor_obs_type='none', num_agents=1, num_use_neighbor_obs=0, use_obstacles=False, my_id = None):
         np.seterr(under='ignore')
         """
         Args:
@@ -233,6 +234,10 @@ class QuadrotorSingle:
 
         self._seed()
 
+        # added by sharif
+        self.my_id = my_id
+        self.is_test_sharif = True
+
     def update_sense_noise(self, sense_noise):
         if isinstance(sense_noise, dict):
             self.sense_noise = SensorNoise(**sense_noise)
@@ -342,6 +347,23 @@ class QuadrotorSingle:
         return [seed]
 
     def _step(self, action):
+
+        if self.is_test_sharif:
+            targ_pos = np.array(
+                [
+                    [- 1.0, 1.2246467991473532e-16, 1.0],
+                    [- 0.7071067811865477, -0.7071067811865475, 1.0],
+                    [- 1.8369701987210297e-16, -1.0, 1.0],
+                    [0.7071067811865474, -0.7071067811865477, 1.0],
+                    [1.0, 0.0, 1.0],
+                    [0.7071067811865476, 0.7071067811865476, 1.0],
+                    [6.123233995736766e-17, 1.0, 1.0],
+                    [- 0.7071067811865475, 0.7071067811865476, 1.0]
+                ]
+            )
+
+            self.goal = targ_pos[self.my_id]
+
         self.actions[1] = copy.deepcopy(self.actions[0])
         self.actions[0] = copy.deepcopy(action)
 
@@ -394,7 +416,23 @@ class QuadrotorSingle:
 
         if self.box < 10:
             self.box = self.box * self.box_scale
+
         x, y, z = self.np_random.uniform(-self.box, self.box, size=(3,)) + self.spawn_point
+
+        if self.is_test_sharif:
+            init_pos = np.array(
+                                    [[1.0, 0.0, 1.0],
+                                    [0.7071067811865476, 0.7071067811865476, 1.0],
+                                    [6.123233995736766e-17, 1.0, 1.0],
+                                    [- 0.7071067811865475, 0.7071067811865476, 1.0],
+                                    [- 1.0, 1.2246467991473532e-16, 1.0],
+                                    [- 0.7071067811865477, -0.7071067811865475, 1.0],
+                                    [- 1.8369701987210297e-16, -1.0, 1.0],
+                                    [0.7071067811865474, -0.7071067811865477, 1.0]]
+                                )
+
+            x, y, z = init_pos[self.my_id]
+
 
         if self.dim_mode == '1D':
             x, y = self.goal[0], self.goal[1]

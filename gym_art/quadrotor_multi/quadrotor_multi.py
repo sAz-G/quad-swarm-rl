@@ -41,6 +41,10 @@ class QuadrotorEnvMulti(gym.Env):
                  ):
         super().__init__()
 
+        self.k_pos = 0
+        self.pos_arr_log = np.zeros((100000, num_agents, 3))
+
+        self.is_testing_sharif = True
         self.neighbor_obs_type = neighbor_obs_type
         # Predefined Parameters
         self.num_agents = num_agents
@@ -70,7 +74,7 @@ class QuadrotorEnvMulti(gym.Env):
                 num_agents=num_agents,
                 neighbor_obs_type=neighbor_obs_type, num_use_neighbor_obs=self.num_use_neighbor_obs,
                 # Obstacle
-                use_obstacles=use_obstacles,
+                use_obstacles=use_obstacles, my_id=i
             )
             self.envs.append(e)
 
@@ -394,11 +398,31 @@ class QuadrotorEnvMulti(gym.Env):
             self.crashes_last_episode = 0
 
         for i, e in enumerate(self.envs):
-            e.goal = self.scenario.goals[i]
-            if self.scenario.spawn_points is None:
-                e.spawn_point = self.scenario.goals[i]
+            if not self.is_testing_sharif:
+                e.goal = self.scenario.goals[i]
+
+                if self.scenario.spawn_points is None:
+                    e.spawn_point = self.scenario.goals[i]
+                else:
+                    e.spawn_point = self.scenario.spawn_points[i]
             else:
-                e.spawn_point = self.scenario.spawn_points[i]
+                targ_pos = np.array(
+                    [
+                     [- 1.0, 1.2246467991473532e-16, 1.0],
+                     [- 0.7071067811865477, -0.7071067811865475, 1.0],
+                     [- 1.8369701987210297e-16, -1.0, 1.0],
+                     [0.7071067811865474, -0.7071067811865477, 1.0],
+                    [1.0, 0.0, 1.0],
+                    [0.7071067811865476, 0.7071067811865476, 1.0],
+                    [6.123233995736766e-17, 1.0, 1.0],
+                    [- 0.7071067811865475, 0.7071067811865476, 1.0]
+                    ]
+                )
+
+                e.goal         = targ_pos[i]
+                e.spawn_point  = targ_pos[i]
+
+
             e.rew_coeff = self.rew_coeff
 
             observation = e.reset()
@@ -457,6 +481,7 @@ class QuadrotorEnvMulti(gym.Env):
 
         obs, rewards, dones, infos = [], [], [], []
 
+        self.k_pos += 1
         for i, a in enumerate(actions):
             self.envs[i].rew_coeff = self.rew_coeff
 
@@ -467,6 +492,15 @@ class QuadrotorEnvMulti(gym.Env):
             infos.append(info)
 
             self.pos[i, :] = self.envs[i].dynamics.pos
+
+            if self.is_testing_sharif:
+                self.pos_arr_log[self.k_pos,i, :] = self.pos[i, :]
+
+                if self.k_pos%1000 == 0 and  not self.k_pos == 0:
+                    print(f"Saving {self.k_pos} positions. Goal is ", self.envs[i].goal)
+                    with open(f'/home/saz/GitHub/quadswarmsharif/poses/poses_{i}.npy', 'wb') as f:
+                        np.save(f, self.pos_arr_log[:self.k_pos,i,:])
+                    np.savetxt(f'/home/saz/GitHub/quadswarmsharif/poses/poses_{i}.csv', self.pos_arr_log[:self.k_pos,i,:], delimiter=",")
 
         # 1. Calculate collisions: 1) between drones 2) with obstacles 3) with room
         # 1) Collisions between drones
