@@ -362,7 +362,7 @@ class QuadrotorSingle:
                 ]
             )
 
-            self.goal = targ_pos[self.my_id]
+            self.goal = targ_pos[int(self.my_id*0)]
 
         self.actions[1] = copy.deepcopy(self.actions[0])
         self.actions[0] = copy.deepcopy(action)

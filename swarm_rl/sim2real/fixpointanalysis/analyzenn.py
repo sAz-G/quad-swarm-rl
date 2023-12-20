@@ -124,6 +124,7 @@ if __name__ == '__main__':
             max_out_1 = np.max(out_self_1)
 
     if PRNT:
+        print("Self information")
         print(max_add_self_0)
         print(max_out_0)
         print(max_addmult_self_0)
@@ -140,7 +141,6 @@ if __name__ == '__main__':
 ######################################################################################################################
 ######################################################################################################################
 ######################################################################################################################
-
 
     neighb_inp        = np.array(np.random.rand(6, samps), dtype=np.float32)
     neighb_inp[0, :] = np.array(np.random.rand(samps)*20.0-10.0, dtype=np.float32)
@@ -192,8 +192,6 @@ if __name__ == '__main__':
 
 
 
-
-
         mult_neighb_1 = neighbor_nn_w[1] * out_neighb_0
         if max_mult_neighb_1 < np.max(np.abs(mult_neighb_1)):
             max_mult_neighb_1 = np.max(np.abs(mult_neighb_1))
@@ -214,6 +212,7 @@ if __name__ == '__main__':
 
     if PRNT:
         print("############################################################################################################")
+        print("neighbor information")
         print()
         print(max_mult_neighb)
         print(max_add_neighb_0)
@@ -223,7 +222,7 @@ if __name__ == '__main__':
         print(max_addmult_neighb_1)
         print(max_out_neighb_1)
         print(max_add_neighb_1)
-        print(max_mult_neighb_1)
+        print()
 
     out_self_0 = np.maximum(self_nn_w[0]@self_inp + self_nn_b[0].reshape(self_nn_b[0].shape[0],1), 0)
     out_self_1 = np.maximum(self_nn_w[1]@out_self_0 + self_nn_b[1].reshape(16,1),0)
