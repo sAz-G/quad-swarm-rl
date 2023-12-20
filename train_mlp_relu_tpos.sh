@@ -1,5 +1,5 @@
 python -m swarm_rl.train \
---env=quadrotor_multi --train_for_env_steps=1300000000 --algo=APPO --use_rnn=False \
+--env=quadrotor_multi --train_for_env_steps=1500000000 --algo=APPO --use_rnn=False \
 --num_workers=4 --num_envs_per_worker=4 --learning_rate=0.0001 --ppo_clip_value=5.0 --recurrence=1 \
 --nonlinearity=relu --actor_critic_share_weights=False --policy_initialization=xavier_uniform \
 --adaptive_stddev=False --with_vtrace=False --max_policy_lag=100000000 --rnn_size=32 \
@@ -9,8 +9,8 @@ python -m swarm_rl.train \
 --replay_buffer_sample_prob=0.75 \
 --quads_mode=mix --quads_episode_duration=15.0 \
 --quads_obs_repr=xyz_vxyz_R_omega \
---quads_neighbor_hidden_size=16 --quads_neighbor_obs_type=pos_vel_tpos --quads_collision_hitbox_radius=2.0 \
+--quads_neighbor_hidden_size=32 --quads_neighbor_obs_type=pos_vel_tpos --quads_collision_hitbox_radius=2.0 \
 --quads_collision_falloff_radius=4.0 --quads_collision_reward=5.0 --quads_collision_smooth_max_penalty=10.0 \
 --quads_neighbor_encoder_type=mlp --quads_neighbor_visible_num=6 \
 --quads_use_obstacles=False --quads_use_downwash=True \
---experiment=mlp_16_8_relu_tpos
+--experiment=mlp_32_32_relu_tpos

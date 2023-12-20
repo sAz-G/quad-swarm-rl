@@ -68,6 +68,7 @@ class ExperienceReplayWrapper(gym.Wrapper):
                  domain_random=False, obst_density_random=False, obst_size_random=False,
                  obst_density_min=0., obst_density_max=0., obst_size_min=0, obst_size_max=0.):
         super().__init__(env)
+
         self.replay_buffer = ReplayBuffer(env.envs[0].control_freq)
         self.replay_buffer_sample_prob = replay_buffer_sample_prob
         self.curr_obst_density = default_obst_density
@@ -181,7 +182,9 @@ class ExperienceReplayWrapper(gym.Wrapper):
             obs = event.obs
             replayed_env = deepcopy(env)
             replayed_env.scenes = self.env.scenes
-            self.curr_obst_density = replayed_env.obst_density
+            #self.curr_obst_density = replayed_env.obst_density,  original
+            self.curr_obst_density = replayed_env.obst_density if hasattr(replayed_env, "obst_density") else  self.curr_obst_density # added by sharif
+
 
             # we want to use these for tensorboard, so reset them to zero to get accurate stats
             replayed_env.collisions_per_episode = replayed_env.collisions_after_settle = 0
