@@ -483,6 +483,20 @@ class QuadrotorEnvMulti(gym.Env):
 
         self.k_pos += 1
         for i, a in enumerate(actions):
+            # targ_pos = np.array(
+            #     [
+            #         [- 1.0, 1.2246467991473532e-16, 1.0],
+            #         [- 0.7071067811865477, -0.7071067811865475, 1.0],
+            #         [- 1.8369701987210297e-16, -1.0, 1.0],
+            #         [0.7071067811865474, -0.7071067811865477, 1.0],
+            #         [1.0, 0.0, 1.0],
+            #         [0.7071067811865476, 0.7071067811865476, 1.0],
+            #         [6.123233995736766e-17, 1.0, 1.0],
+            #         [- 0.7071067811865475, 0.7071067811865476, 1.0]
+            #     ]
+            # )
+
+            #self.envs[i].goal = targ_pos[int(i)]
             self.envs[i].rew_coeff = self.rew_coeff
 
             observation, reward, done, info = self.envs[i].step(a)
@@ -496,7 +510,7 @@ class QuadrotorEnvMulti(gym.Env):
             if self.is_testing_sharif:
                 self.pos_arr_log[self.k_pos,i, :] = self.pos[i, :]
 
-                if self.k_pos%1000 == 0 and  not self.k_pos == 0:
+                if self.k_pos%100 == 0 and  not self.k_pos == 0:
                     print(f"Saving {self.k_pos} positions. Goal is ", self.envs[i].goal)
                     with open(f'/home/saz/GitHub/quadswarmsharif/poses/poses_{i}.npy', 'wb') as f:
                         np.save(f, self.pos_arr_log[:self.k_pos,i,:])
