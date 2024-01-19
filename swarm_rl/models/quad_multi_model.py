@@ -63,6 +63,18 @@ class QuadNeighborhoodEncoderAttention(QuadNeighborhoodEncoder):
             nonlinearity(cfg),
         )
 
+        class CUSTOM_LINEAR(nn.Module):
+            def __init__(self):
+                super(CUSTOM_LINEAR, self).__init__()
+
+            def forward(self,x):
+                for h in range(x.numel()):
+                    if x[h] < 0:
+                        x[h] = 0
+                    elif x[h] > 1:
+                        x[h] = 1
+                return x
+
         # outputs scalar score alpha_i for each neighbor i
         self.attention_mlp = nn.Sequential(
             fc_layer(neighbor_hidden_size * 2, neighbor_hidden_size),
@@ -70,7 +82,7 @@ class QuadNeighborhoodEncoderAttention(QuadNeighborhoodEncoder):
             nonlinearity(cfg),
             fc_layer(neighbor_hidden_size, neighbor_hidden_size),
             nonlinearity(cfg),
-            fc_layer(neighbor_hidden_size, 1),
+            fc_layer(neighbor_hidden_size, 1), CUSTOM_LINEAR()
         )
 
     def forward(self, self_obs, obs, all_neighbor_obs_size, batch_size):
@@ -180,7 +192,7 @@ class QuadMultiHeadAttentionEncoder(Encoder):
         # MLP Layer
         self.encoder_output_size = 2 * cfg.rnn_size
         self.feed_forward = nn.Sequential(fc_layer(3 * cfg.rnn_size, self.encoder_output_size),
-                                          nn.Tanh())
+                                          nn.ReLU())
 
     def forward(self, obs_dict):
         obs = obs_dict['obs']
@@ -260,7 +272,7 @@ class QuadSingleHeadAttentionEncoder_Sim2Real(QuadMultiHeadAttentionEncoder):
         # MLP Layer
         self.encoder_output_size = cfg.rnn_size
         self.feed_forward = nn.Sequential(fc_layer(3 * cfg.rnn_size, self.encoder_output_size),
-                                          nn.Tanh())
+                                          nn.ReLU())
 
 
 class QuadMultiEncoder(Encoder):
