@@ -224,10 +224,10 @@ if __name__ == '__main__':
         print(max_add_neighb_1)
         print()
 
-    out_self_0 = np.maximum(self_nn_w[0]@self_inp + self_nn_b[0].reshape(self_nn_b[0].shape[0],1), 0)
+    out_self_0 = np.maximum(self_nn_w[0]@self_inp   + self_nn_b[0].reshape(self_nn_b[0].shape[0],1), 0)
     out_self_1 = np.maximum(self_nn_w[1]@out_self_0 + self_nn_b[1].reshape(16,1),0)
 
-    out_neighb_0 = np.maximum(neighbor_nn_w[0] @ neighb_inp + neighbor_nn_b[0].reshape(neighbor_nn_b[0].shape[0], 1), 0)
+    out_neighb_0 = np.maximum(neighbor_nn_w[0] @ neighb_inp   + neighbor_nn_b[0].reshape(neighbor_nn_b[0].shape[0], 1), 0)
     out_neighb_1 = np.maximum(neighbor_nn_w[1] @ out_neighb_0 + neighbor_nn_b[1].reshape(8, 1), 0)
 
     inp_ff   = np.concatenate((out_self_1,out_neighb_1))
