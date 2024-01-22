@@ -678,7 +678,7 @@ def generate_c_model(model: nn.Module, output_path: str, output_folder: str, tes
 if __name__ == '__main__':
     # example use case
     cfg = AttrDict({
-        'torch_model_dir': '/home/saz/Desktop/qsrl_test/train_dir/mean_embed_16_8_relu',
+        'torch_model_dir': '/home/saz/GitHub/quadswarmsharif/train_dir/archive/attention_16_8_relu',
         'output_dir': 'swarm_rl/sim2real/c_models',
         'output_model_name': 'model.c',
         'testing': True,
