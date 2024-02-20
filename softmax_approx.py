@@ -140,7 +140,7 @@ if __name__ == '__main__':
     ax[2].plot(x_sig, np.tanh(x_sig))
     ax[2].plot(x_sig, fix_tanh*( 2.0**( -SHIFT ) ) )
     #ax[2].plot(x_sig, fix_tanh_2*( 2.0**( -SHIFT ) ) )
-    ax[2].plot(x_sig, (fix_tanh_3*( 2.0**( -SHIFT ) )))
+    ax[2].plot(x_sig, (fix_tanh_3*( 2.0**( -SHIFT ) )), '--')
     ax[3].plot(x_sft, (sftmax*( 2.0**( -SHIFT ) )), '--o')
     ax[3].plot(x_sft, softmax_local(x_sft), 'o')
     ax[0].legend(['numpy', 'approx'])
