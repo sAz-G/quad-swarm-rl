@@ -2,11 +2,11 @@ import numpy as np
 import torch
 import matplotlib.pyplot as plt
 #plt.rcParams['axes.grid'] = True
-plt.rcParams.update({'font.size': 13})
+plt.rcParams.update({'font.size': 17})
 
 plt.rcParams.update({
     "text.usetex": True,
-    "font.family": "Helvetica"
+    "font.family": "Serif"
 })
 
 if __name__ == '__main__':
@@ -45,6 +45,8 @@ if __name__ == '__main__':
     nerr_arr = np.zeros(z)*10**6
     iter = 10
     kk = 0
+    cc = np.zeros((z, iter))*10**6
+
     while kk < iter:
         kk = kk+1
         for n in range(1,z+1):
@@ -306,26 +308,32 @@ if __name__ == '__main__':
 
 
             #nerr_arr[n-1] = np.sqrt( np.sum( ( out_final_fix_1*(2**-n) - out_mlp)**2 ) )
+            cc[n-1, iter-1] = nerr_arr[n-1]
             if nerr_arr[n-1] <  np.sqrt( np.sum( ( out_final_fix_1*(2**-n) - out_mlp)**2 ) )/4:
                 nerr_arr[n-1] = np.sqrt( np.sum( ( out_final_fix_1*(2**-n) - out_mlp)**2 ) )/4
 
-            #print()
-            #print(out_final_fix_1)
-            #print(out_mlp)
+            #if n == 13:
+                # print()
+                # print(out_final_fix_1*(2**(-n)))
+                # print(out_mlp)
 
+
+
+    #print(np.mean(cc, axis=1))
 
     dff = np.abs(np.min(nerr_arr) - np.max(nerr_arr))*0.09
-    plt.plot(range(1,14), nerr_arr[0:13], 'o')
-    plt.plot(14, nerr_arr[13], 'ro')
-    plt.plot(15, nerr_arr[14], 'ro')
-   # plt.plot(16, nerr_arr[15], 'ro')
+    plt.plot(range(1,14), nerr_arr[0:13], 'o', markersize=8)
+    plt.plot(14, nerr_arr[13], 'ro', markersize=8)
+    plt.plot(15, nerr_arr[14], 'ro', markersize=8)
     plt.plot([1, 15], np.array([1, 1])*np.min(nerr_arr) , '--',color='0.5')
     plt.xticks([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15])
     plt.yticks(np.arange(np.min(nerr_arr), np.max(nerr_arr), dff))
     plt.xlabel('$n$ bits')
-    plt.ylabel('Error')
+    plt.ylabel('$|| 2^{-n}\\mathbf{a}_{n} - \\mathbf{a} ||_2$')
     plt.ylim([np.min(nerr_arr) - dff*0.2, np.max(nerr_arr) + dff*0.2])
     plt.grid()
+
+    plt.hist(cc[12,:])
 
     plt.show()
 
